@@ -31,7 +31,7 @@ def read_zip_data(zip_file):
     else:
         df.columns = ['ship_id','x','y','speed','direction','time']
     return df
-	
+    
 
 def clean_data(df, train_flag=1):
 
@@ -149,24 +149,24 @@ def model_lgb(train, test, label='y'):
 
 if __name__ == '__main__':
     print("reading dataset...")
-	train = read_zip_data('hy_round1_train_20200102')
-	test = read_zip_data('hy_round1_testA_20200102')
-	
-	print("data processing...")
-	train_df = clean_data(train)
-	test_df = clean_data(test, 0)
-	
-	### training model
+    train = read_zip_data('hy_round1_train_20200102')
+    test = read_zip_data('hy_round1_testA_20200102')
+    
+    print("data processing...")
+    train_df = clean_data(train)
+    test_df = clean_data(test, 0)
+    
+    ### training model
     pred_test_y, model, evals_result = model_lgb(train_df, test_df, label='type')
-	
-	### output submission
+    
+    ### output submission
     type_map = dict(zip(train['type'].unique(), np.arange(3)))
-	type_map_rev = {v:k for k,v in type_map.items()}
-	pred = np.argmax(pred_test_y, axis=1)
-	submission = test_df[['ship_id']]
-	submission['pred'] = pred
-	print("predicting...")
-	submission['pred'] = submission['pred'].map(type_map_rev)
-	submission.to_csv('result_14Jan.csv', index=None, header=None)
-	
-	print("All done")
+    type_map_rev = {v:k for k,v in type_map.items()}
+    pred = np.argmax(pred_test_y, axis=1)
+    submission = test_df[['ship_id']]
+    submission['pred'] = pred
+    print("predicting...")
+    submission['pred'] = submission['pred'].map(type_map_rev)
+    submission.to_csv('result_14Jan.csv', index=None, header=None)
+    
+    print("All done")
